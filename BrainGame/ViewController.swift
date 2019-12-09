@@ -9,37 +9,97 @@
 import UIKit
 
 class ViewController: UIViewController {
-
-    @IBOutlet weak var changeColorButton: UIButton!
+    
+    @IBOutlet weak var yesButton: UIButton!
+    @IBOutlet weak var noButton: UIButton!
     @IBOutlet weak var bottomColor: UITextView!
     @IBOutlet weak var topColor: UITextView!
+    @IBOutlet weak var question: UILabel!
+    @IBOutlet weak var winCount: UILabel!
+    @IBOutlet weak var lossCount: UILabel!
+    @IBOutlet weak var score: UILabel!
+    
+    var accurate = true
+    var wins = 0
+    var losses = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         changeColorPair()
-    }
-
-    @IBAction func changeColor(_ sender: Any) {
         changeBackgroundColor()
-        changeColorPair()
+    }
+    
+    @IBAction func yesButton(_ sender: Any) {
+        if accurate {
+            wins += 1
+            winCount.text = String(wins)
+        } else {
+            losses += 1
+            lossCount.text = String(losses)
+        }
+        score.text = String((wins - losses) * 10)
+        changeColor()
+    }
+    
+    @IBAction func noButton(_ sender: Any) {
+        if !accurate {
+            wins += 1
+            winCount.text = String(wins)
+        } else {
+            losses += 1
+            lossCount.text = String(losses)
+        }
+        score.text = String((wins - losses) * 10)
+        changeColor()
+    }
+    
+    func changeColor() {
+        changeBackgroundColor()
+        accurate = changeColorPair()
     }
     
     func changeBackgroundColor() {
         let red = Double.random(in: 0...1)
         let green = Double.random(in: 0...1)
         let blue = Double.random(in: 0...1)
+        var redneg = red + 0.5
+        var greenneg = green + 0.5
+        var blueneg = blue + 0.5
+        
+        if redneg >= 1 {
+            redneg -= 1
+        }
+        if greenneg >= 1 {
+            greenneg -= 1
+        }
+        if blueneg >= 1 {
+            blueneg -= 1
+        }
         
         let bgMainColor = UIColor(red: CGFloat(red), green: CGFloat(green), blue: CGFloat(blue), alpha: 1)
-        let bgSecondaryColor = UIColor(red: CGFloat((red + 0.5).truncatingRemainder(dividingBy: 1)), green: CGFloat((green + 0.5).truncatingRemainder(dividingBy: 1)), blue: CGFloat((blue + 0.5).truncatingRemainder(dividingBy: 1)), alpha: 1)
+        let bgSecondaryColor = UIColor(red: CGFloat(redneg), green: CGFloat(greenneg), blue: CGFloat(blueneg), alpha: 1)
         
         self.view.backgroundColor = bgMainColor
-        changeColorButton.tintColor = bgSecondaryColor
-        changeColorButton.setTitleColor(bgMainColor, for: .normal)
+        
+        noButton.tintColor = bgSecondaryColor
+        noButton.setTitleColor(bgMainColor, for: .normal)
+        
+        yesButton.tintColor = bgSecondaryColor
+        yesButton.setTitleColor(bgMainColor, for: .normal)
+        
+        topColor.textColor = bgMainColor
+        question.textColor = bgMainColor
+        topColor.backgroundColor = bgSecondaryColor
+        
+        bottomColor.backgroundColor = bgSecondaryColor
+        
+        
     }
     
-    func changeColorPair() {
+    func changeColorPair() -> Bool {
         let accurate = Bool.random()
+        print(accurate)
         
         let colorTextList = ["RED", "BLUE", "BROWN", "GREEN", "PINK", "ORANGE", "YELLOW"]
         
@@ -56,6 +116,7 @@ class ViewController: UIViewController {
         bottomColor.text = "\n" + colorTextList.randomElement()!
         bottomColor.textColor = newBottomColor
         
+        return accurate
     }
     
     func generateAccurateColor(_ color : String) -> (UIColor)  {
