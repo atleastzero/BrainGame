@@ -18,16 +18,31 @@ class ViewController: UIViewController {
     @IBOutlet weak var winCount: UILabel!
     @IBOutlet weak var lossCount: UILabel!
     @IBOutlet weak var score: UILabel!
+    @IBOutlet weak var timeLabel: UILabel!
     
     var accurate = true
     var wins = 0
     var losses = 0
+    
+    var timer:Timer?
+    var timeLeft = 60
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         changeColorPair()
         changeBackgroundColor()
+        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(onTimerFires), userInfo: nil, repeats: true)
+    }
+    
+    @objc func onTimerFires() {
+        timeLeft -= 1
+        timeLabel.text = "\(timeLeft)"
+
+        if timeLeft <= 0 {
+            timer!.invalidate()
+            timer = nil
+        }
     }
     
     @IBAction func yesButton(_ sender: Any) {
